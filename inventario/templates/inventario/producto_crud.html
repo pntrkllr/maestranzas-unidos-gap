@@ -41,7 +41,7 @@
 
           {% if request.user.groups.first.name != 'Almacén' %}
             <div class="text-end mb-3">
-              <a href="{% url 'registro_producto' %}" class="btn btn-primary">Agregar Producto</a>
+              <a href="{% url 'registro_producto' %}" class="btn btn-dark">Agregar Producto</a>
             </div>
           {% endif %}
 
@@ -109,10 +109,12 @@
                     </td>
                     <td class="text-nowrap">
                       {% if request.user.groups.first.name != 'Almacén' %}
-                        <a href="{% url 'editar_producto' producto.id %}" class="btn btn-warning btn-sm">Editar</a>
+                        <a href="{% url 'editar_producto' producto.id %}" class="btn btn-secondary btn-sm">Editar</a>
                         <a href="?delete={{ producto.id }}" class="btn btn-danger btn-sm" onclick="return confirm('¿Eliminar este producto?');">Eliminar</a>
                       {% endif %}
-                      <button class="btn btn-info btn-sm" data-bs-toggle="collapse" data-bs-target="#historial{{ producto.id }}">Detalles</button>
+                      <button class="btn btn-sm" data-bs-toggle="collapse" data-bs-target="#historial{{ producto.id }}">
+                        <i class="fas fa-chevron-down"></i>
+                      </button>
                     </td>
                   </tr>
 
@@ -150,9 +152,9 @@
                                         {% endif %}
                                       </td>
                                       {% if request.user.groups.first.name == 'Administrador' %}
-                                        <td>
+                                        <td class="text-center">
                                           <a href="{% url 'eliminar_historial_precio' h.id %}" class="btn btn-danger btn-sm"
-                                            onclick="return confirm('¿Eliminar este historial de precio?');">🗑</a>
+                                            onclick="return confirm('¿Eliminar este historial de precio?');">Eliminar</a>
                                         </td>
                                       {% endif %}
                                     </tr>
@@ -187,9 +189,9 @@
                                       <td>{{ mov.motivo|default:"—" }}</td>
                                       <td>{{ mov.fecha|date:"d/m/Y H:i" }}</td>
                                       {% if request.user.groups.first.name == 'Administrador' %}
-                                        <td>
+                                        <td class="text-center">
                                           <a href="{% url 'eliminar_movimiento' mov.id %}" class="btn btn-danger btn-sm"
-                                            onclick="return confirm('¿Eliminar este movimiento?');">🗑</a>
+                                            onclick="return confirm('¿Eliminar este movimiento?');">Eliminar</a>
                                         </td>
                                       {% endif %}
                                     </tr>
@@ -221,7 +223,7 @@
                             <input type="text" name="motivo" class="form-control" placeholder="Motivo (opcional)">
                           </div>
                           <div class="col-md-3">
-                            <button type="submit" class="btn btn-success w-100">Registrar</button>
+                            <button type="submit" class="btn btn-dark w-100">Registrar</button>
                           </div>
                         </form>
                       </div>

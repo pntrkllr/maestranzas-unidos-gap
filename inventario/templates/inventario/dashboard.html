@@ -10,7 +10,7 @@
 {% block content %}
 <div class="container mt-5">
   
-  <h1 class="mb-4 text-center">Panel de Control</h1>
+  <h1 class="mb-4 text-center text-black">Panel de Control</h1>
 
   {# 🔔 Alerta solo para Administrador y Comprador #}
   {% if productos_stock_minimo and user.is_authenticated and user.groups.first.name in 'Administrador,Comprador' %}
