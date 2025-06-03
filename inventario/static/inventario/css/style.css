@@ -1,0 +1,115 @@
+/* === ESTILOS GENERALES DE LA APLICACIÓN === */
+
+body {
+    background-color: blanchedalmond;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* ENCABEZADO NAVBAR */
+
+.nav-color {
+    background-color: black;
+}
+
+.navbar {
+    padding: 1rem 2rem;
+}
+
+/* Contenedor principal del navbar - usa flexbox */
+.navbar > .container-fluid {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+/* Logo y título - se mantienen a la izquierda */
+.navbar .d-flex.align-items-center.gap-2 {
+    margin-right: auto; /* Empuja todo lo demás a la derecha */
+}
+
+/* Contenedor de los elementos de navegación */
+.navbar-collapse {
+    flex-grow: 0; /* Evita que ocupe todo el espacio */
+}
+
+/* Lista de navegación - alineada a la derecha */
+.navbar-nav {
+    display: flex;
+    align-items: center;
+    margin-left: auto; /* Alinea a la derecha */
+    padding-right: 1rem;
+}
+
+/* Elementos individuales del menú */
+.navbar-nav .nav-item {
+    margin: 0 10px;
+}
+
+.navbar-nav .nav-link {
+    color: #ffffff !important;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+    white-space: nowrap; /* Evita saltos de línea */
+}
+
+.navbar-nav .nav-link:hover {
+    text-decoration: none;
+    color: #ffc107 !important;
+}
+
+/* Área del usuario (nombre y botón logout) */
+.navbar .d-flex.align-items-center.ms-auto {
+    margin-left: auto !important; /* Lo coloca completamente a la derecha */
+    padding-left: 15px;
+}
+
+.navbar-text {
+    color: #ffffff;
+    font-size: 1rem;
+    margin-right: 15px;
+}
+
+.btn-outline-light {
+    border-color: #ffc107;
+    color: #ffc107;
+}
+
+.btn-outline-light:hover {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+/* Estilos para el footer */
+footer {
+    background-color: #343a40;
+    color: white;
+    text-align: center;
+    padding: 15px 0;
+    margin-top: 50px;
+}
+
+.container {
+    max-width: 960px;
+}
+
+/* Estilos responsivos - ajustes para pantallas pequeñas */
+@media (max-width: 992px) {
+    .navbar-collapse {
+        flex-basis: 100%;
+        order: 1;
+    }
+    
+    .navbar-nav {
+        margin: 10px 0;
+        width: 100%;
+        justify-content: flex-end;
+    }
+    
+    .navbar .d-flex.align-items-center.ms-auto {
+        margin: 10px 0 !important;
+        width: 100%;
+        justify-content: flex-end;
+    }
+}

@@ -1,0 +1,274 @@
+{% extends 'inventario/base.html' %}
+
+{% block title %}Lista de Productos{% endblock %}
+
+{% block content %}
+<div class="container my-5 px-0">
+  <div class="row justify-content-center mx-0">
+    <div class="col-lg-12 px-0">
+      <div class="card shadow">
+        <div class="card-body p-4">
+          <h2 class="text-center mb-4">Lista de Productos</h2>
+
+          <!-- Filtros -->
+          <form method="get" class="row g-3 mb-4 mx-0">
+            <div class="col-md-4">
+              <select name="categoria" class="form-select" onchange="this.form.submit()">
+                <option value="">Todas las categorías</option>
+                {% for cat in categorias %}
+                  <option value="{{ cat.id }}" {% if cat.id == categoria_seleccionada %}selected{% endif %}>
+                    {{ cat.nombre }}
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="col-md-4">
+              <select name="bodega" class="form-select" onchange="this.form.submit()">
+                <option value="">Todas las bodegas</option>
+                {% for bod in bodegas %}
+                  <option value="{{ bod.id }}" {% if bod.id == bodega_seleccionada %}selected{% endif %}>
+                    {{ bod.nombre }}
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="col-md-2">
+              <a href="{% url 'producto_crud' %}" class="btn btn-secondary w-100">Resetear</a>
+            </div>
+          </form>
+
+          {% if request.user.groups.first.name != 'Almacén' %}
+            <div class="text-end mb-3">
+              <a href="{% url 'registro_producto' %}" class="btn btn-primary">Agregar Producto</a>
+            </div>
+          {% endif %}
+
+          <div class="table-responsive">
+            <table class="table table-bordered table-striped table-hover mb-0">
+              <thead class="table-dark">
+                <tr>
+                  <th>Nombre</th>
+                  <th>Serie</th>
+                  <th>Categoría</th>
+                  <th>Bodega</th>
+                  <th>Precio</th>
+                  <th>Descripción</th>
+                  <th>Vencimiento</th>
+                  <th>Stock</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for producto in productos %}
+                  <tr>
+                    <td>{{ producto.nombre }}</td>
+                    <td><span class="badge bg-dark">{{ producto.serial_number }}</span></td>
+                    <td>{{ producto.categoria.nombre|default:"Sin categoría" }}</td>
+                    
+                    <td>
+                      {% if request.user.groups.first.name != 'Almacén' %}
+                        <form method="post" action="{% url 'cambiar_bodega' producto.id %}" class="d-flex align-items-center">
+                          {% csrf_token %}
+                          <select name="nueva_bodega" class="form-select form-select-sm me-2">
+                            {% for b in bodegas %}
+                              <option value="{{ b.id }}" {% if producto.bodega and producto.bodega.id == b.id %}selected{% endif %}>
+                                {{ b.nombre }}
+                              </option>
+                            {% endfor %}
+                          </select>
+                          <button type="submit" class="btn btn-sm btn-outline-secondary">Cambiar</button>
+                        </form>
+                      {% else %}
+                        {{ producto.bodega.nombre }}
+                      {% endif %}
+                    </td>
+
+                    <td>${{ producto.precio }}</td>
+                    <td>{{ producto.descripcion|truncatechars:30 }}</td>
+                    <td>
+                      {% if producto.fecha_vencimiento %}
+                        {% if producto.fecha_vencimiento < today %}
+                          <span class="badge bg-danger">Vencido ({{ producto.fecha_vencimiento|date:"d/m/Y" }})</span>
+                        {% elif producto.fecha_vencimiento <= today_plus_7 %}
+                          <span class="badge bg-warning text-dark">Por vencer ({{ producto.fecha_vencimiento|date:"d/m/Y" }})</span>
+                        {% else %}
+                          <span class="badge bg-success">{{ producto.fecha_vencimiento|date:"d/m/Y" }}</span>
+                        {% endif %}
+                      {% else %}
+                        <span class="text-muted">Sin fecha</span>
+                      {% endif %}
+                    </td>
+                    <td>
+                      {% if producto.stock <= producto.stock_minimo %}
+                        <span class="badge bg-danger">Bajo ({{ producto.stock }})</span>
+                      {% else %}
+                        <span class="badge bg-success">{{ producto.stock }}</span>
+                      {% endif %}
+                    </td>
+                    <td class="text-nowrap">
+                      {% if request.user.groups.first.name != 'Almacén' %}
+                        <a href="{% url 'editar_producto' producto.id %}" class="btn btn-warning btn-sm">Editar</a>
+                        <a href="?delete={{ producto.id }}" class="btn btn-danger btn-sm" onclick="return confirm('¿Eliminar este producto?');">Eliminar</a>
+                      {% endif %}
+                      <button class="btn btn-info btn-sm" data-bs-toggle="collapse" data-bs-target="#historial{{ producto.id }}">Detalles</button>
+                    </td>
+                  </tr>
+
+                  <!-- Detalles -->
+                  <tr class="collapse" id="historial{{ producto.id }}">
+                    <td colspan="9">
+                      <div class="p-3 bg-light rounded">
+                        <p><strong>Número de Serie:</strong> <span class="badge bg-secondary">{{ producto.serial_number }}</span></p>
+
+                        <div class="row">
+                          <div class="col-md-6">
+                            <h5>Historial de Precios</h5>
+                            <div class="table-responsive">
+                              <table class="table table-sm table-bordered">
+                                <thead>
+                                  <tr>
+                                    <th>Precio</th>
+                                    <th>Fecha</th>
+                                    <th>Usuario</th>
+                                    {% if request.user.groups.first.name == 'Administrador' %}
+                                      <th>Acción</th>
+                                    {% endif %}
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {% for h in producto.historial_precios.all|dictsortreversed:"fecha" %}
+                                    <tr>
+                                      <td>${{ h.precio }}</td>
+                                      <td>{{ h.fecha|date:"d/m/Y H:i" }}</td>
+                                      <td>
+                                        {% if h.usuario %}
+                                          {{ h.usuario.get_full_name|default:h.usuario.username }}
+                                        {% else %}
+                                          <em class="text-muted">Sin usuario</em>
+                                        {% endif %}
+                                      </td>
+                                      {% if request.user.groups.first.name == 'Administrador' %}
+                                        <td>
+                                          <a href="{% url 'eliminar_historial_precio' h.id %}" class="btn btn-danger btn-sm"
+                                            onclick="return confirm('¿Eliminar este historial de precio?');">🗑</a>
+                                        </td>
+                                      {% endif %}
+                                    </tr>
+                                  {% empty %}
+                                    <tr><td colspan="4">No hay historial.</td></tr>
+                                  {% endfor %}
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+
+                          <div class="col-md-6">
+                            <h5>Últimos Movimientos</h5>
+                            <div class="table-responsive">
+                              <table class="table table-sm table-bordered">
+                                <thead>
+                                  <tr>
+                                    <th>Tipo</th>
+                                    <th>Cantidad</th>
+                                    <th>Motivo</th>
+                                    <th>Fecha</th>
+                                    {% if request.user.groups.first.name == 'Administrador' %}
+                                      <th>Acción</th>
+                                    {% endif %}
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {% for mov in producto.movimientoinventario_set.all|dictsortreversed:"fecha"|slice:"5" %}
+                                    <tr>
+                                      <td>{{ mov.tipo|title }}</td>
+                                      <td>{{ mov.cantidad }}</td>
+                                      <td>{{ mov.motivo|default:"—" }}</td>
+                                      <td>{{ mov.fecha|date:"d/m/Y H:i" }}</td>
+                                      {% if request.user.groups.first.name == 'Administrador' %}
+                                        <td>
+                                          <a href="{% url 'eliminar_movimiento' mov.id %}" class="btn btn-danger btn-sm"
+                                            onclick="return confirm('¿Eliminar este movimiento?');">🗑</a>
+                                        </td>
+                                      {% endif %}
+                                    </tr>
+                                  {% empty %}
+                                    <tr><td colspan="5">Sin movimientos aún.</td></tr>
+                                  {% endfor %}
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+                        </div>
+
+                        <hr>
+
+                        <h5>Registrar Movimiento de Inventario</h5>
+                        <form method="post" action="{% url 'registrar_movimiento_directo' producto.id %}" class="row g-3">
+                          {% csrf_token %}
+                          <div class="col-md-2">
+                            <select name="tipo" class="form-select" required>
+                              <option value="">Tipo</option>
+                              <option value="entrada">Entrada</option>
+                              <option value="salida">Salida</option>
+                            </select>
+                          </div>
+                          <div class="col-md-2">
+                            <input type="number" name="cantidad" class="form-control" placeholder="Cantidad" min="1" required>
+                          </div>
+                          <div class="col-md-5">
+                            <input type="text" name="motivo" class="form-control" placeholder="Motivo (opcional)">
+                          </div>
+                          <div class="col-md-3">
+                            <button type="submit" class="btn btn-success w-100">Registrar</button>
+                          </div>
+                        </form>
+                      </div>
+                    </td>
+                  </tr>
+                {% empty %}
+                  <tr><td colspan="9" class="text-center py-4">No hay productos registrados.</td></tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Estilos personalizados para eliminar scroll horizontal */
+  .container {
+    max-width: 100%;
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  
+  .card {
+    width: 100%;
+    margin: 0 auto;
+  }
+  
+  .table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  @media (max-width: 768px) {
+    .card-body {
+      padding: 1rem !important;
+    }
+    
+    .form-select, .btn {
+      font-size: 0.9rem;
+    }
+    
+    .table td, .table th {
+      padding: 0.5rem;
+    }
+  }
+</style>
+{% endblock %}

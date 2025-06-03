@@ -1,0 +1,42 @@
+{% extends 'inventario/base.html' %}
+{% load static %}
+
+{% block title %}Productos{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'inventario/css/tienda.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+{% endblock %}
+
+{% block content %}
+<header class="header">
+  <div class="header-content container d-flex justify-content-between align-items-center">
+  </div>
+</header>
+
+<!-- Catálogo -->
+<div class="container mt-4">
+  <h1 class="mb-4">Catálogo de Herramientas</h1>
+  <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+    {% for producto in productos %}
+    <div class="col">
+      <div class="card product-card">
+
+        {% if producto.imagen %}
+          <img src="{{ producto.imagen.url }}" class="card-img-top product-image" alt="{{ producto.nombre }}">
+        {% else %}
+          <img src="{% static 'inventario/img/default.jpg' %}" class="card-img-top product-image" alt="Imagen por defecto">
+        {% endif %}
+
+        <div class="card-body">
+          <h5 class="card-title">{{ producto.nombre }}</h5>
+          <p class="card-text">{{ producto.descripcion }}</p>
+          <p class="text-primary fw-bold">${{ producto.precio }}</p>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% endblock %}
