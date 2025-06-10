@@ -64,9 +64,9 @@ def login_view(request):
 
 @login_required
 @groups_required('Comprador', 'Gestor de Inventario', 'Almacén')
-def tienda_view(request):
+def lista_productos_view(request):
     productos = Producto.objects.all()
-    return render(request, 'inventario/tienda.html', {'productos': productos})
+    return render(request, 'inventario/lista_productos.html', {'productos': productos})
 
 def registro_usuario(request):
     if request.method == 'POST':
@@ -329,7 +329,7 @@ def logout_view(request):
 
 @login_required
 @groups_required('Administrador', 'Gestor de Inventario', 'Almacén','Comprador')
-def dashboard_view(request):
+def panel_control_view(request):
     total_productos = Producto.objects.count()
     stock_critico = Producto.objects.filter(stock__lt=5).count()
     total_usuarios = User.objects.count()
@@ -358,7 +358,7 @@ def dashboard_view(request):
         'productos_stock_minimo': productos_stock_minimo,  # 📌
     }
 
-    return render(request, 'inventario/dashboard.html', context)
+    return render(request, 'inventario/panel_control.html', context)
 
 @login_required
 def exportar_excel(request):
@@ -407,7 +407,7 @@ def exportar_excel(request):
         buffer,
         content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     )
-    response['Content-Disposition'] = 'attachment; filename=dashboard_maestranza.xlsx'
+    response['Content-Disposition'] = 'attachment; filename=reporte_maestranza.xlsx'
     return response
 
     

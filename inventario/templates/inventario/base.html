@@ -33,22 +33,22 @@
           {% if user.is_authenticated %}
           {% if user.groups.first.name == 'Administrador' %}
           <li class="nav-item"><a class="nav-link" href="{% url 'usuarios_crud' %}">Usuarios</a></li>
-          <li class="nav-item"><a class="nav-link" href="{% url 'dashboard' %}">Panel de Control</a></li>
-          <li class="nav-item"><a class="nav-link" href="{% url 'tienda' %}">Todos los productos</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'panel_control' %}">Panel de Control</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'lista_productos' %}">Todos los productos</a></li>
           <li class="nav-item"><a class="nav-link" href="{% url 'producto_crud' %}">Gestionar productos</a></li>
 
           {% elif user.groups.first.name == 'Gestor de Inventario' %}
-          <li class="nav-item"><a class="nav-link" href="{% url 'dashboard' %}">Panel de Control</a></li>
-          <li class="nav-item"><a class="nav-link" href="{% url 'tienda' %}">Todos los productos</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'panel_control' %}">Panel de Control</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'lista_productos' %}">Todos los productos</a></li>
           <li class="nav-item"><a class="nav-link" href="{% url 'producto_crud' %}">Gestionar productos</a></li>
 
           {% elif user.groups.first.name == 'Comprador' %}
-          <li class="nav-item"><a class="nav-link" href="{% url 'dashboard' %}">Panel de Control</a></li>
-          <li class="nav-item"><a class="nav-link" href="{% url 'tienda' %}">Todos los productos</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'panel_control' %}">Panel de Control</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'lista_productos' %}">Todos los productos</a></li>
 
           {% elif user.groups.first.name == 'Almacén' %}
-          <li class="nav-item"><a class="nav-link" href="{% url 'dashboard' %}">Panel de Control</a></li>
-          <li class="nav-item"><a class="nav-link" href="{% url 'tienda' %}">Todos los productos</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'panel_control' %}">Panel de Control</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'lista_productos' %}">Todos los productos</a></li>
           <li class="nav-item"><a class="nav-link" href="{% url 'producto_crud' %}">Gestionar productos</a></li>
           {% endif %}
           {% else %}
@@ -85,7 +85,6 @@
           </div>
         </div>
 
-        <!--Parte inferior footer-->
         <div class="text-center p-4 barra">
           © 2025
           <a class="text-white" href="{% url 'index' %}">Maestranzas Unidos S.A.</a>
