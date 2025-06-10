@@ -1,19 +1,58 @@
+/* General */
 body {
   background-color: #f5f7fa;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.card-shadow {
+h1 {
+  font-weight: bold;
+  text-align: center;
+  color: black;
+  margin-bottom: 2rem;
+}
+
+/* Alerta */
+.alert-top {
+  position: relative;
+  margin-bottom: 2rem;
+}
+
+/* Layout */
+.dashboard-layout {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
+/* Métricas en columna */
+.metrics-sidebar {
+  flex: 1 1 250px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.charts-section {
+  flex: 3 1 600px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Cards de métricas */
+.card-shadow,
+.card-metric {
   border: none;
   border-radius: 1rem;
   padding: 1.2rem;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
   text-align: center;
   transition: transform 0.3s ease;
-  color: #fff; /* texto blanco */
+  color: #fff;
 }
 
-.card-shadow:hover {
+.card-shadow:hover,
+.card-metric:hover {
   transform: translateY(-5px);
 }
 
@@ -33,6 +72,7 @@ body {
   background: linear-gradient(to right, #ffc107, #fcd462);
 }
 
+/* Texto en cards */
 .card-title {
   font-size: 1.1rem;
   font-weight: 600;
@@ -46,21 +86,16 @@ body {
   margin: 0;
 }
 
+/* Gráficos */
 canvas {
   background-color: #ffffff;
   border-radius: 1rem;
   padding: 1rem;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
-  margin-top: 20px;
+  width: 100%;
 }
 
-h1 {
-  font-weight: bold;
-  text-align: center;
-  color: #2c3e50;
-  margin-bottom: 2rem;
-}
-
+/* Botón Exportar */
 .btn-outline-success {
   font-size: 1rem;
   padding: 0.75rem 1.5rem;
@@ -72,4 +107,15 @@ h1 {
 
 .btn-outline-success i {
   font-size: 1.2rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .dashboard-layout {
+    flex-direction: column;
+  }
+
+  .charts-section {
+    order: -1;
+  }
 }

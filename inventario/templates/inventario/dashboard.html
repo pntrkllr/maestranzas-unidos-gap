@@ -4,77 +4,85 @@
 {% block title %}Panel de control{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<link rel="stylesheet" href="{% static 'css/dashboard_reimaginado.css' %}">
 {% endblock %}
 
 {% block content %}
 <div class="container mt-5">
-  
-  <h1 class="mb-4 text-center text-black">Panel de Control</h1>
 
-  {# 🔔 Alerta solo para Administrador y Comprador #}
-  {% if productos_stock_minimo and user.is_authenticated and user.groups.first.name in 'Administrador,Comprador' %}
-    <div class="alert alert-warning alert-dismissible fade show" role="alert">
-      <h5>⚠️ Atención: Productos con stock bajo o sin stock</h5>
-      <ul class="mb-0">
-        {% for p in productos_stock_minimo %}
-          <li>
-            <strong>{{ p.nombre }}</strong> — Stock: {{ p.stock }} (mínimo: {{ p.stock_minimo }})
-          </li>
-        {% endfor %}
-      </ul>
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
-    </div>
+  <h2 class="mb-5 text-center text-black">Panel de Control</h2>
+
+  <h5 class="mb-5 text-center text-black">Administra todo lo esencial desde aquí.</h5>
+
+  {% if productos_stock_minimo and user.is_authenticated and user.groups.first.name in 'Administrador, Comprador' %}
+  <div class="alert alert-warning alert-dismissible fade show shadow-sm" role="alert">
+    <h5>PRODUCTOS CON STOCK BAJO O SIN STOCK:</h5>
+    <ul class="mb-0">
+      {% for p in productos_stock_minimo %}
+      <li>
+        <strong>{{ p.nombre }}</strong> — Stock: {{ p.stock }} (mínimo: {{ p.stock_minimo }})
+      </li>
+      {% endfor %}
+    </ul>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+  </div>
   {% endif %}
 
-  <div class="row text-center mb-4">
-    <div class="col-md-3">
-      <div class="card bg-gradient-primary card-metric">
-        <h5>Total Productos</h5>
-        <p>{{ total_productos }}</p>
+  <div class="row">
+    {# Métricas a la izquierda #}
+    <div class="col-lg-4 mb-4">
+      <div class="card bg-gradient-primary card-shadow mb-3">
+        <h5 class="card-title text-center text-black">Total Productos</h5>
+        <p class="card-text text-center">{{ total_productos }}</p>
+      </div>
+      <div class="card bg-gradient-danger card-shadow mb-3">
+        <h5 class="card-title text-center text-black">Stock Crítico</h5>
+        <p class="card-text text-center">{{ stock_critico }}</p>
+      </div>
+      <div class="card bg-gradient-success card-shadow mb-3">
+        <h5 class="card-title text-center text-black">Usuarios Registrados</h5>
+        <p class="card-text text-center">{{ total_usuarios }}</p>
+      </div>
+      <div class="card bg-gradient-warning card-shadow">
+        <h5 class="card-title text-center text-black">Conectados Hoy</h5>
+        <p class="card-text text-center">{{ usuarios_activos }}</p>
       </div>
     </div>
-    <div class="col-md-3">
-      <div class="card bg-gradient-danger card-metric">
-        <h5>Stock Crítico</h5>
-        <p>{{ stock_critico }}</p>
-      </div>
-    </div>
-    <div class="col-md-3">
-      <div class="card bg-gradient-success card-metric">
-        <h5>Usuarios Registrados</h5>
-        <p>{{ total_usuarios }}</p>
-      </div>
-    </div>
-    <div class="col-md-3">
-      <div class="card bg-gradient-warning card-metric">
-        <h5>Conectados Hoy</h5>
-        <p>{{ usuarios_activos }}</p>
+
+    {# Tablas a la derecha #}
+    <div class="col-lg-8">
+      <div class="card card-shadow p-4">
+        <h5 class="mb-3">Productos con stock bajo:</h5>
+        <div class="table-responsive">
+          <table class="table table-hover table-striped">
+            <thead class="table-dark">
+              <tr>
+                <th>Producto</th>
+                <th>Categoría</th>
+                <th>Stock</th>
+                <th>Stock Mínimo</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for p in productos_stock_minimo %}
+              <tr>
+                <td>{{ p.nombre }}</td>
+                <td>{{ p.categoria }}</td>
+                <td>{{ p.stock }}</td>
+                <td>{{ p.stock_minimo }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
 
-  <div class="row g-4">
-    <div class="col-md-6">
-      <canvas id="graficoCategorias"
-              data-labels='{{ labels_categorias|safe }}'
-              data-data='{{ data_categorias|safe }}'></canvas>
-    </div>
-    <div class="col-md-6">
-      <canvas id="graficoStock"
-              data-labels='{{ labels_productos|safe }}'
-              data-data='{{ data_stock|safe }}'></canvas>
-    </div>
-    <div class="col-12 mt-4 text-center">
-      <a class="btn btn-outline-success" href="{% url 'exportar_excel' %}">
-        Exportar en Excel
-      </a>
-    </div>
+  <div class="text-center mt-5">
+    <a class="btn btn-success" href="{% url 'exportar_excel' %}">
+      <i class="bi bi-download"></i> Exportar en Excel
+    </a>
   </div>
 </div>
-{% endblock %}
-
-{% block extra_js %}
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="{% static 'js/dashboard.js' %}"></script>
 {% endblock %}

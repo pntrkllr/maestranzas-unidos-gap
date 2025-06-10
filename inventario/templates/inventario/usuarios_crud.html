@@ -4,121 +4,137 @@
 {% block title %}Gestión de Usuarios{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
+<div class="container mt-5" style="max-width: 1200px;">
   <h2 class="mb-4 text-center text-black">Gestión de Usuarios</h2>
 
-  <div class="card mb-4">
-    <div class="card-header">
-      {% if editar %}Editar Usuario: {{ usuario.username }}{% else %}Crear Nuevo Usuario{% endif %}
+  <h5 class="mb-4 text-center text-black">Crea nuevvos usuarios o revisa los usuarios que existen actualmente.</h5>
+
+  <div class="row">
+    <!-- FORMULARIO A LA IZQUIERDA -->
+    <div class="col-md-6 mb-4">
+      <div class="card h-100 shadow border border-dark">
+        <div class="card-header bg-dark text-white">
+          {% if editar %}Editar Usuario: {{ usuario.username }}{% else %}Crear Nuevo Usuario{% endif %}
+        </div>
+        <div class="card-body">
+          <form method="post">
+            {% csrf_token %}
+
+            <div class="form-group mb-3">
+              <label for="id_username">Nombre de Usuario:</label>
+              {{ form.username }}
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="id_email">Correo Electrónico:</label>
+              {{ form.email }}
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="id_first_name">Nombre:</label>
+              {{ form.first_name }}
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="id_last_name">Apellido:</label>
+              {{ form.last_name }}
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="id_password">Contraseña:</label>
+              {{ form.password }}
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="id_password_confirm">Confirmar Contraseña:</label>
+              {{ form.password_confirm }}
+            </div>
+
+            <div class="form-group mb-4">
+              <label for="grupo">Rol del Usuario:</label>
+              <select name="grupo" class="form-select" required>
+                <option value="">Seleccionar rol</option>
+                {% for g in grupos %}
+                  <option value="{{ g.name }}" {% if grupo_usuario and grupo_usuario.name == g.name %}selected{% endif %}>
+                    {{ g.name }}
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <button type="submit" class="btn btn-dark me-2">
+              {% if editar %}Guardar Cambios{% else %}Crear Usuario{% endif %}
+            </button>
+
+            {% if editar %}
+              <a href="{% url 'usuarios_crud' %}" class="btn btn-secondary">Cancelar</a>
+            {% endif %}
+          </form>
+        </div>
+      </div>
     </div>
-    <div class="card-body">
-      <form method="post">
-        {% csrf_token %}
 
-        <div class="form-group mb-3">
-          <label for="id_username">Nombre de Usuario: </label>
-          {{ form.username }}
+    <!-- TABLA A LA DERECHA -->
+    <div class="col-md-6">
+      <div class="card shadow border border-dark">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="mb-0 text-black">Lista de Usuarios</h5>
+            <form method="get" class="mb-0">
+              <div class="input-group">
+                <select name="grupo" class="form-select form-select-sm" onchange="this.form.submit()">
+                  <option value="">Todos los roles</option>
+                  {% for g in grupos %}
+                    <option value="{{ g.name }}" {% if grupo_seleccionado == g.name %}selected{% endif %}>
+                      {{ g.name }}
+                    </option>
+                  {% endfor %}
+                </select>
+              </div>
+            </form>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table table-bordered table-striped align-middle">
+              <thead class="table-dark">
+                <tr>
+                  <th>Usuario</th>
+                  <th>Email</th>
+                  <th>Rol</th>
+                  <th class="text-center">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for u in usuarios %}
+                  <tr>
+                    <td>{{ u.username }}</td>
+                    <td>{{ u.email }}</td>
+                    <td>
+                      {% if u.groups.all %}
+                        {{ u.groups.first.name }}
+                      {% else %}
+                        <span class="text-muted">Sin rol</span>
+                      {% endif %}
+                    </td>
+                    <td class="text-center">
+                      <div class="d-flex justify-content-center gap-2">
+                        <a href="?edit={{ u.id }}" class="btn btn-sm btn-secondary">Editar</a>
+                        <a href="?delete={{ u.id }}" class="btn btn-sm btn-danger"
+                          onclick="return confirm('¿Estás seguro de que quieres eliminar este usuario?');">Eliminar</a>
+                      </div>
+                    </td>
+                  </tr>
+                {% empty %}
+                  <tr>
+                    <td colspan="4" class="text-center">No hay usuarios registrados.</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
         </div>
-
-        <div class="form-group mb-3">
-          <label for="id_email">Correo Electrónico: </label>
-          {{ form.email }}
-        </div>
-
-        <div class="form-group mb-3">
-          <label for="id_first_name">Nombre: </label>
-          {{ form.first_name }}
-        </div>
-
-        <div class="form-group mb-3">
-          <label for="id_last_name">Apellido: </label>
-          {{ form.last_name }}
-        </div>
-
-        <div class="form-group mb-3">
-          <label for="id_password">Contraseña: </label>
-          {{ form.password }}
-        </div>
-
-        <div class="form-group mb-3">
-          <label for="id_password_confirm">Confirmar Contraseña: </label>
-          {{ form.password_confirm }}
-        </div>
-
-        <!-- 👇 Campo de selección de grupo -->
-        <div class="form-group mb-3">
-          <label for="grupo">Rol del Usuario</label>
-          <select name="grupo" class="form-select" required>
-            <option value="">Seleccionar rol</option>
-            {% for g in grupos %}
-              <option value="{{ g.name }}" {% if grupo_usuario and grupo_usuario.name == g.name %}selected{% endif %}>
-
-                {{ g.name }}
-              </option>
-            {% endfor %}
-          </select>
-        </div>
-
-        <button type="submit" class="btn btn-dark">
-          {% if editar %}Guardar Cambios{% else %}Crear Usuario{% endif %}
-        </button>
-
-        {% if editar %}
-          <a href="{% url 'usuarios_crud' %}" class="btn btn-secondary">Cancelar</a>
-        {% endif %}
-      </form>
+      </div>
     </div>
   </div>
-
-<div class="d-flex justify-content-between align-items-center mb-3">
-  <h4 class="mb-0 text-black">Lista completa de usuarios</h4>
-  
-  <!-- 🔎 Filtro por grupo -->
-  <form method="get" class="mb-0">
-    <div class="input-group">
-      <select name="grupo" class="form-select" onchange="this.form.submit()">
-        <option value="">Todos los roles</option>
-        {% for g in grupos %}
-          <option value="{{ g.name }}" {% if grupo_seleccionado == g.name %}selected{% endif %}>
-            {{ g.name }}
-          </option>
-        {% endfor %}
-      </select>
-    </div>
-  </form>
-</div>
-
-<table class="table table-bordered table-striped">
-  <thead>
-    <tr>
-      <th>Nombre de Usuario</th>
-      <th>Email</th>
-      <th>Rol</th>
-      <th>Acciones</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for u in usuarios %}
-    <tr>
-      <td>{{ u.username }}</td>
-      <td>{{ u.email }}</td>
-      <td>
-        {% if u.groups.all %}
-          {{ u.groups.first.name }}
-        {% else %}
-          <span class="text-muted">Sin rol</span>
-        {% endif %}
-      </td>
-      <td class="text-center">
-        <a href="?edit={{ u.id }}" class="btn btn-secondary btn-sm">Editar</a>
-        <a href="?delete={{ u.id }}" class="btn btn-danger btn-sm"
-           onclick="return confirm('¿Estás seguro de que quieres eliminar este usuario?');">Eliminar</a>
-      </td>
-    </tr>
-    {% empty %}
-    <tr><td colspan="4" class="text-center">No hay usuarios registrados.</td></tr>
-    {% endfor %}
-  </tbody>
-</table>
 </div>
 {% endblock %}
