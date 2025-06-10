@@ -1,33 +1,33 @@
-Para ejecutar primero crear entorno virtual: python -m venv nombre_entorno
-Luego activar el entorno virtual: venv\Scripts\activate
-Despues instalar el archivo requirements.txt: pip install -r requirements.txt
+# Solución Maestranzas Unidos S.A.
+Gestión Ágil de Proyectos 2025
 
-***IMPORTANTE**
-Superuser creado
-USER: admin
-PASS: admin123
+## Instalación (Git instalado en el equipo previamente):
 
+1.- Clonar el repositorio:
+    https://github.com/pntrkllr/maestranzas-unidos-gap.git
+    
+*Dentro de la carpeta 'maestranzas-unidos-gap', abrir con VS Code.*
 
--- COMANDOS PARA INCIAR PROGRAMA -- 
+2.- Crear ambiente virtual (myvenv):
+    py -m venv myvenv
 
-python -m venv env
-Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
-.\env\Scripts\Activate.ps1
-pip install django
-python -m pip install Pillow
-pip install openpyxl
- python manage.py runserver
+3.- Activar ambiente virtual:
+    .\myvenv\Scripts\activate
 
--- PENDIENTES POR HACER -- 
+4.- Instalar pip:
+    py -m pip install --upgrade pip
 
-  SEGUIMIENTO DE MOVIENTOS (ENTRADAS, SALIDAS)
-  ASIGNACIÓN DE ETIQUETAS Y CATEGORÍAS
-  HISTORIAL DE PRECIOS DE COMPRA
-  GESTIÓN DE KITS Y CONJUTOS
-  REPORTES PRESONALIZADOS EXPORTABLES
-  GESTIÓN DE PROVEEDORES
-  INTEGRACIÓN CON ÓRDENES DE COMPRA
-  ROLES DIFERENCIADOS POR PERFIL (ADMINISTRADOR, GESTOR, COMPRADOR, ETC)
+5.- Instalar dependencias (requirements.txt):
+    pip install -r .\requirements.txt
 
-  ESCALABILIDAD
-  SOPORTE A CONTIGENCIAS (RESPALDO ANTE CORTE DE ENERGÍA)
+6.- Inicializar servidor de Django:
+    py .\manage.py runserver
+
+## Información importante:
+
+Superusuario (Admin):
+
+Usuario: admin
+Contraseña: admin123..
+
+--Rodrigo Guzmán - Ángel Llanos - Rodrigo Rocabado--
