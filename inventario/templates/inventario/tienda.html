@@ -16,6 +16,7 @@
 
 <div class="container mt-4">
   <h1 class="mb-4 text-black text-center">Productos disponibles:</h1>
+  <h5 class="mb-4 text-center text-black">Revisa los productos actualmente listados.</h5>
   <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
     {% for producto in productos %}
     <div class="col">
@@ -30,7 +31,7 @@
         <div class="card-body">
           <h5 class="card-title">{{ producto.nombre }}</h5>
           <p class="card-text">{{ producto.descripcion }}</p>
-          <p class="text-primary fw-bold">${{ producto.precio }}</p>
+          <p class="fs-4 text-black fw-bold">${{ producto.precio }}</p>
         </div>
       </div>
     </div>
