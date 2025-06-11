@@ -33,7 +33,11 @@
   </button>
 </div>
 
-<h1 class="text-black mt-5 text-center" style="font-weight: bold;">¡Bienvenido, {{ user.username }}!</h1>
+{% if user.is_authenticated %}
+  <h1 class="text-black mt-5 text-center" style="font-weight: bold;">¡Bienvenid@, {{ user.username }}!</h1>
+{% else %}
+  <h1 class="text-black mt-5 text-center" style="font-weight: bold;">¡Bienvenid@!</h1>
+{% endif %}
 
 <div class="container mt-5 mb-5 text-center">
   <h2 class="mb-4 text-black text-center">Productos disponibles:</h2>
